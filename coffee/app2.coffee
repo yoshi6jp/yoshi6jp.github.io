@@ -98,6 +98,8 @@ initWebgl = ->
     model.scale.set 100, 100, 100
     scene.add model
 
+onceVibrate = _.once ->
+  navigator.vibrate? [300, 300, 300]
 init = ->
   do initCam
   do initWebgl
@@ -111,6 +113,7 @@ init = ->
   if id
     conn = peer.connect id
     conn.on "data", (pos)->
+      do onceVibrate
       model.position.set pos[0]*50, pos[1]*50, pos[2]*50
 
 
