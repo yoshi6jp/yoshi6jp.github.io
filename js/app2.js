@@ -98,7 +98,7 @@
     });
   };
 
-  initWebgl = function() {
+  initWebgl = function(object_id) {
     var grid, light, loader;
     renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -124,7 +124,7 @@
     scene.add(light);
     grid = new THREE.GridHelper(1000, 100);
     loader = new THREE.JSONLoader;
-    return loader.load('objects/Chair.json', function(geometry, materials) {
+    return loader.load("objects/" + object_id + ".json", function(geometry, materials) {
       model = new THREE.Mesh(geometry, new THREE.MeshFaceMaterial(materials));
       model.position.set(30, 0, -150);
       model.scale.set(100, 100, 100);
@@ -137,9 +137,13 @@
   });
 
   init = function() {
-    var conn, id, peer;
+    var conn, hash, id, object_id, peer, _ref;
+    hash = location.hash.replace('#', '');
+    if (hash) {
+      _ref = hash.split('/'), id = _ref[0], object_id = _ref[1];
+    }
     initCam();
-    initWebgl();
+    initWebgl(object_id);
     peer = new Peer({
       host: 'peerjs-kamata.herokuapp.com',
       secure: true,
@@ -147,7 +151,6 @@
       key: 'peerjs',
       debug: 3
     });
-    id = location.hash.replace('#', '');
     if (id) {
       conn = peer.connect(id);
       return conn.on("data", function(pos) {

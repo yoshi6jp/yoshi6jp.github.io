@@ -60,7 +60,7 @@ initCam = ->
     , -> console.log "err=", arguments
 
 
-initWebgl = ->
+initWebgl = (object_id)->
   renderer = new THREE.WebGLRenderer antialias: true, alpha: true
   renderer.setClearColor 0x000000, 0
   $webgl.append renderer.domElement
@@ -90,9 +90,7 @@ initWebgl = ->
   # scene.add grid
 
   loader = new THREE.JSONLoader
-  # loader.load 'objects/sofa.json', ( geometry, materials )->
-  loader.load 'objects/Chair.json', ( geometry, materials )->
-  # loader.load 'objects/alfaromeo.json', ( geometry, materials )->
+  loader.load "objects/#{object_id}.json", ( geometry, materials )->
     model = new THREE.Mesh geometry, new THREE.MeshFaceMaterial materials
     model.position.set 30,0,-150
     model.scale.set 100, 100, 100
@@ -101,15 +99,16 @@ initWebgl = ->
 onceVibrate = _.once ->
   navigator.vibrate? [300, 300, 300]
 init = ->
+  hash = location.hash.replace '#', ''
+  [id, object_id] = hash.split '/' if hash
   do initCam
-  do initWebgl
+  initWebgl object_id
   peer = new Peer
     host:'peerjs-kamata.herokuapp.com'
     secure:true
     port:443
     key: 'peerjs'
     debug: 3
-  id = location.hash.replace '#', ''
   if id
     conn = peer.connect id
     conn.on "data", (pos)->
