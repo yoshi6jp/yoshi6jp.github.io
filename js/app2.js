@@ -152,7 +152,7 @@
       debug: 3
     });
     if (id) {
-      conn = peer.connect(id);
+      conn = peer.connect(id,{reliable:true});
       return conn.on("data", function(pos) {
         onceVibrate();
         return model.position.set(pos[0] * 50, pos[1] * 50, pos[2] * 50);
